@@ -11,4 +11,5 @@ main()
     cout << "Enter database name" << endl; 
     cin >> testDBName; 
     databaseWrapper testDB(testDBName);
+    testDB.printTable("table1");
 }

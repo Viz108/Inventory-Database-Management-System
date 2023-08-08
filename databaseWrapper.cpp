@@ -32,7 +32,17 @@ void databaseWrapper::printTable(string tableName)
     sqlite3_exec(dbPointer, query.c_str(), printTableHelper, 0, &errorMessage);
 }
 
-static int printTableHelper(void *unused, int argc, char **argv, char**azColName)
+int databaseWrapper::printTableHelper(void *unused, int argc, char **argv, char**azColName)
 {
-    
+    for(int i = 0; i < argc; i++)
+    {
+        cout << azColName[i] << "   ";
+    }
+    cout << endl; 
+    for(int i = 0; i < argc; i++)
+    {
+        cout << argv[i] << "    ";
+    }
+    cout << endl;
+    return 0;
 }

@@ -14,6 +14,7 @@ class databaseWrapper
         void addRecord(string productName, int initialQuantity); //Adds a new product to the database
         void removeRecord(string productName); //Removes a product from the database
         void changeInventory(string productName, int inventoryChange); //Adds/subtracts quantity of product from database
+        static int printTableHelper(void *unused, int argc, char **argv, char**azColName);
 
     private:
         sqlite3* dbPointer;
@@ -22,6 +23,5 @@ class databaseWrapper
 };
 
 //Static callback functions
-static int printTableHelper(void *unused, int argc, char **argv, char**azColName);
 
 #endif
