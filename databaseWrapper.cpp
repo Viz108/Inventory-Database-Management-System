@@ -26,19 +26,26 @@ databaseWrapper::databaseWrapper(string dbName)
 
 void databaseWrapper::printTable(string tableName)
 {
+    string colNames = "SELECT name FROM PRAGMA_TABLE_INFO('table1');";
     string query = "SELECT * FROM " + tableName;
     char* errorMessage = 0;
 
+    sqlite3_exec(dbPointer, colNames.c_str(), printColNames, 0, &errorMessage);
+    cout << endl;
     sqlite3_exec(dbPointer, query.c_str(), printTableHelper, 0, &errorMessage);
+}
+
+int databaseWrapper::printColNames(void *unused, int argc, char **argv, char**azColName)
+{
+    for(int i = 0; i < argc; i++)
+    {
+        cout << argv[i] << "    ";
+    }
+    return 0;
 }
 
 int databaseWrapper::printTableHelper(void *unused, int argc, char **argv, char**azColName)
 {
-    for(int i = 0; i < argc; i++)
-    {
-        cout << azColName[i] << "   ";
-    }
-    cout << endl; 
     for(int i = 0; i < argc; i++)
     {
         cout << argv[i] << "    ";
