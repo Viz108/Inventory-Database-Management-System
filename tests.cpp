@@ -11,5 +11,9 @@ main()
     cout << "Enter database name" << endl; 
     cin >> testDBName; 
     databaseWrapper testDB(testDBName);
-    testDB.printTable("table1");
+    testDB.printTable("inventoryTable");
+    testDB.addRecord("test product", "inventoryTable", 100);
+    testDB.printTable("inventoryTable");
+    
+    cout << "end of program" << endl;
 }

@@ -1,9 +1,12 @@
 #include "databaseWrapper.h"
 #include <iostream>
 #include <string>
+#include <vector>
 #include <sqlite3.h>
 
 using namespace std;
+
+vector<string> databaseWrapper::currColNames;
 
 databaseWrapper::databaseWrapper(string dbName)
 {
@@ -22,24 +25,47 @@ databaseWrapper::databaseWrapper(string dbName)
     {
         cout << "Successfully opened " + dbName << endl; 
     }
+
+    //Check if new (empty) database
+    string query = "SELECT name FROM PRAGMA_TABLE_INFO('inventoryTable');";
+    char* errorMessage = 0;
+    sqlite3_exec(dbPointer, query.c_str(), pullColNames, 0, &errorMessage);
+    if(currColNames.empty())
+    {
+        cout << "New database, creating table" << endl; 
+        string newTableQuery = "CREATE TABLE inventoryTable (id INT, productName VARCHAR, quantity INT);";
+        sqlite3_exec(dbPointer, newTableQuery.c_str(), nullptr, 0, &errorMessage);
+    }
+    sqlite3_exec(dbPointer, query.c_str(), pullColNames, 0, &errorMessage);
 }
 
 void databaseWrapper::printTable(string tableName)
 {
-    string colNames = "SELECT name FROM PRAGMA_TABLE_INFO('table1');";
+    string colNames = "SELECT name FROM PRAGMA_TABLE_INFO('inventoryTable');";
     string query = "SELECT * FROM " + tableName;
     char* errorMessage = 0;
 
-    sqlite3_exec(dbPointer, colNames.c_str(), printColNames, 0, &errorMessage);
+    for(int i = 0; i < currColNames.size(); i++)
+    {
+        cout << currColNames.at(i) << "    "; 
+    }
     cout << endl;
     sqlite3_exec(dbPointer, query.c_str(), printTableHelper, 0, &errorMessage);
+    cout << "End of print" << endl;
 }
 
-int databaseWrapper::printColNames(void *unused, int argc, char **argv, char**azColName)
+int databaseWrapper::pullColNames(void *unused, int argc, char **argv, char**azColName)
 {
     for(int i = 0; i < argc; i++)
     {
-        cout << argv[i] << "    ";
+        if(argv[i] == NULL)
+        {
+            currColNames.push_back("NULL");
+        }
+        else
+        {
+            currColNames.push_back(argv[i]);
+        }
     }
     return 0;
 }
@@ -48,8 +74,25 @@ int databaseWrapper::printTableHelper(void *unused, int argc, char **argv, char*
 {
     for(int i = 0; i < argc; i++)
     {
-        cout << argv[i] << "    ";
+        if(argv[i] == NULL)
+        {
+            cout << "NULL" << "    ";
+        }
+        else
+        {
+            cout << argv[i] << "    ";
+        }
     }
     cout << endl;
     return 0;
 }
+
+int databaseWrapper::addRecord(string productName, string tableName, int initialQuantity)
+{
+    cout << "adding record" << endl; 
+    string query = "INSERT INTO " + tableName + " (id, productName, quantity) VALUES (" + to_string(nextID) + ", '" + productName + "', " + to_string(initialQuantity) + ");";
+    char* errorMessage = 0;
+    sqlite3_exec(dbPointer, query.c_str(), nullptr, 0, &errorMessage);
+    nextID++;
+    return 0;
+};
