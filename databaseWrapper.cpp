@@ -7,6 +7,7 @@
 using namespace std;
 
 vector<string> databaseWrapper::currColNames;
+int databaseWrapper::largestID = 0;
 
 databaseWrapper::databaseWrapper(string dbName)
 {
@@ -35,8 +36,22 @@ databaseWrapper::databaseWrapper(string dbName)
         cout << "New database, creating table" << endl; 
         string newTableQuery = "CREATE TABLE inventoryTable (id INT, productName VARCHAR, quantity INT);";
         sqlite3_exec(dbPointer, newTableQuery.c_str(), nullptr, 0, &errorMessage);
+        sqlite3_exec(dbPointer, query.c_str(), pullColNames, 0, &errorMessage);
+
     }
-    sqlite3_exec(dbPointer, query.c_str(), pullColNames, 0, &errorMessage);
+    else
+    {
+        //Pull largest ID
+        string largestIdQuery = "SELECT MAX(Id) FROM inventoryTable";
+        sqlite3_exec(dbPointer, largestIdQuery.c_str(),assignLargestID,0,nullptr);
+    }
+}
+
+int databaseWrapper::assignLargestID(void *unused, int argc, char **argv, char**azColName)
+{
+    largestID = stoi(argv[0]);
+    nextID = largestID + 1;
+    return 0;
 }
 
 void databaseWrapper::printTable(string tableName)
@@ -50,7 +65,7 @@ void databaseWrapper::printTable(string tableName)
         cout << currColNames.at(i) << "    "; 
     }
     cout << endl;
-    sqlite3_exec(dbPointer, query.c_str(), printTableHelper, 0, &errorMessage);
+    sqlite3_exec(dbPointer, query.c_str(), printHelper, 0, &errorMessage);
     cout << "End of print" << endl;
 }
 
@@ -70,7 +85,7 @@ int databaseWrapper::pullColNames(void *unused, int argc, char **argv, char**azC
     return 0;
 }
 
-int databaseWrapper::printTableHelper(void *unused, int argc, char **argv, char**azColName)
+int databaseWrapper::printHelper(void *unused, int argc, char **argv, char**azColName)
 {
     for(int i = 0; i < argc; i++)
     {
@@ -96,3 +111,15 @@ int databaseWrapper::addRecord(string productName, string tableName, int initial
     nextID++;
     return 0;
 };
+
+void databaseWrapper::searchId(int id)
+{
+    string query = "SELECT * FROM inventoryTable WHERE id = " + to_string(id);
+    
+    for(int i = 0; i < currColNames.size(); i++)
+    {
+        cout << currColNames.at(i) << "    "; 
+    }
+    cout << endl;
+    sqlite3_exec(dbPointer, query.c_str(), printHelper, 0, nullptr); 
+}
