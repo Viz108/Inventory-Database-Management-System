@@ -13,6 +13,7 @@ class databaseWrapper
         void printTable(string tableName); //Print all contents of a database table
         int addRecord(string productName, string tableName, int initialQuantity); //Adds a new product to the database, returns product ID
         void searchId(int id); //Searches for a record using unique ID
+        void searchName(string name); //Searches for a record by name
         void removeRecord(string productName); //Removes a product from the database
         void changeInventory(string productName, int inventoryChange); //Adds/subtracts quantity of product from database
 

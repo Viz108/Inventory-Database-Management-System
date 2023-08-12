@@ -112,9 +112,9 @@ int databaseWrapper::addRecord(string productName, string tableName, int initial
     return 0;
 };
 
-void databaseWrapper::searchId(int id)
+void databaseWrapper::searchName(string name)
 {
-    string query = "SELECT * FROM inventoryTable WHERE id = " + to_string(id);
+    string query = "SELECT * FROM inventoryTable WHERE productName = " + name;
     
     for(int i = 0; i < currColNames.size(); i++)
     {
@@ -123,3 +123,4 @@ void databaseWrapper::searchId(int id)
     cout << endl;
     sqlite3_exec(dbPointer, query.c_str(), printHelper, 0, nullptr); 
 }
+
