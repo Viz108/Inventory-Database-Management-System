@@ -8,31 +8,37 @@ using namespace std;
 main()
 {
     string testDBName; 
-    char nextAction;
+    string nextAction = "a";
 
     cout << "Enter database name" << endl; 
-    cin >> testDBName; 
+    getline(cin, testDBName);
     databaseWrapper testDB(testDBName);
-    cout << "Select action " << endl;
-    cin >> nextAction;
-    if(nextAction == 'p')
+
+    while(nextAction != "q")
     {
-        testDB.printTable("inventoryTable");\
+        cout << "Select action " << endl;
+        getline(cin, nextAction);
+        cout << "Next action is " << nextAction << endl;
+        if(nextAction == "p")
+        {
+            testDB.printTable("inventoryTable");\
+        }
+        else if(nextAction == "s")
+        {
+            cout << "Enter id to search" << endl; 
+            string IdString;
+            getline(cin, IdString);
+            testDB.searchId(IdString);
+        }
+        else if(nextAction == "n")
+        {
+            cout << "Enter name to search: "; 
+            string nameInput;
+            getline(cin, nameInput);
+            testDB.searchName(nameInput);
+        }
     }
-    else if(nextAction == 's')
-    {
-        // cout << "Enter id to search" << endl; 
-        // int searchId;
-        // cin >> searchId;
-        // testDB.searchId(searchId);
-    }
-    else if(nextAction == 'n')
-    {
-        cout << "Enter name to search" << endl; 
-        string nameInput;
-        cin >> nameInput;
-        testDB.searchName(nameInput);
-    }
+   
     // testDB.addRecord("test product", "inventoryTable", 100);
     // testDB.printTable("inventoryTable");
     

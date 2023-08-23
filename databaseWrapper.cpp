@@ -112,9 +112,9 @@ int databaseWrapper::addRecord(string productName, string tableName, int initial
     return 0;
 };
 
-void databaseWrapper::searchName(string name)
+void databaseWrapper::searchId(string id)
 {
-    string query = "SELECT * FROM inventoryTable WHERE productName = " + name;
+    string query = "SELECT * FROM inventoryTable WHERE id = '" + id + "'";
     
     for(int i = 0; i < currColNames.size(); i++)
     {
@@ -124,3 +124,26 @@ void databaseWrapper::searchName(string name)
     sqlite3_exec(dbPointer, query.c_str(), printHelper, 0, nullptr); 
 }
 
+void databaseWrapper::searchName(string name)
+{
+    string query = "SELECT * FROM inventoryTable WHERE productName = '" + name + "'";
+    
+    for(int i = 0; i < currColNames.size(); i++)
+    {
+        cout << currColNames.at(i) << "    "; 
+    }
+    cout << endl;
+    sqlite3_exec(dbPointer, query.c_str(), printHelper, 0, nullptr); 
+}
+
+void databaseWrapper::removeRecord(string productName)
+{
+    string query = "DELETE FROM inventoryTable WHERE productName = " + productName;
+    sqlite3_exec(dbPointer, query.c_str(), nullptr, 0, nullptr); 
+}
+
+void databaseWrapper::changeInventory(string productName, int inventoryChange)
+{
+    string query = "UPDATE inventoryTable SET quantity = '" + to_string(inventoryChange) + "' WHERE productName = '" + productName +"'";
+    sqlite3_exec(dbPointer, query.c_str(), nullptr, 0, nullptr); 
+}
