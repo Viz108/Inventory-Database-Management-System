@@ -102,14 +102,13 @@ int databaseWrapper::printHelper(void *unused, int argc, char **argv, char**azCo
     return 0;
 }
 
-int databaseWrapper::addRecord(string productName, string tableName, int initialQuantity)
+void databaseWrapper::addRecord(string productName, string tableName, int initialQuantity)
 {
     cout << "adding record" << endl; 
     string query = "INSERT INTO " + tableName + " (id, productName, quantity) VALUES (" + to_string(nextID) + ", '" + productName + "', " + to_string(initialQuantity) + ");";
     char* errorMessage = 0;
     sqlite3_exec(dbPointer, query.c_str(), nullptr, 0, &errorMessage);
     nextID++;
-    return 0;
 };
 
 void databaseWrapper::searchId(string id)
@@ -138,7 +137,7 @@ void databaseWrapper::searchName(string name)
 
 void databaseWrapper::removeRecord(string productName)
 {
-    string query = "DELETE FROM inventoryTable WHERE productName = " + productName;
+    string query = "DELETE FROM inventoryTable WHERE productName = '" + productName + "'";
     sqlite3_exec(dbPointer, query.c_str(), nullptr, 0, nullptr); 
 }
 
